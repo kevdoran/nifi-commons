@@ -1,3 +1,18 @@
+target
+.project
+.settings
+.classpath
+nbactions.xml
+nb-configuration.xml
+.DS_Store
+.metadata
+.recommenders
+.vscode
+.idea/
+*.iml
+*.iws
+*~
+
 # Compiled class file
 *.class
 
