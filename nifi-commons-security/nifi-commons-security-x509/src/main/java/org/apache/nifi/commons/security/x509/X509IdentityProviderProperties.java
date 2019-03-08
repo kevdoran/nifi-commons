@@ -1,6 +1,8 @@
 package org.apache.nifi.commons.security.x509;
 
-public class X509IdentityProviderProperties {
+import org.apache.nifi.commons.security.identity.BaseIdentityProviderProperties;
+
+public class X509IdentityProviderProperties extends BaseIdentityProviderProperties {
 
     private boolean enabled;
 

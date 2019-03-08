@@ -23,7 +23,7 @@ public class IdentityMapperProperties {
 
     private boolean enabled = false;
 
-    private Map<String, IdentityMapping> mappings = new HashMap<>();
+    private Map<String, IdentityMapperRule> rules = new HashMap<>();
 
     public boolean isEnabled() {
         return enabled;
@@ -33,11 +33,11 @@ public class IdentityMapperProperties {
         this.enabled = enabled;
     }
 
-    public Map<String, IdentityMapping> getMappings() {
-        return mappings;
+    public Map<String, IdentityMapperRule> getRules() {
+        return rules;
     }
 
-    public void setMappings(Map<String, IdentityMapping> mappings) {
-        this.mappings = mappings;
+    public void setRules(Map<String, IdentityMapperRule> rules) {
+        this.rules = rules;
     }
 }

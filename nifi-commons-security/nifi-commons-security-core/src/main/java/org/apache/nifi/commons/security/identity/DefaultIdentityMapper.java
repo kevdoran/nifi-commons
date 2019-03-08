@@ -26,30 +26,30 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IdentityMapperImpl implements IdentityMapper {
+public class DefaultIdentityMapper implements IdentityMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdentityMapperImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultIdentityMapper.class);
     private static final Pattern BACK_REFERENCE_PATTERN = Pattern.compile("\\$(\\d+)");
 
-    private final List<KeyedIdentityMapping> mappings;
+    private final List<KeyedIdentityMapperRule> mappings;
 
-    public IdentityMapperImpl(IdentityMapperProperties properties) {
+    public DefaultIdentityMapper(IdentityMapperProperties properties) {
 
         // TODO, build mappings
-        final Map<String, IdentityMapping> propertiesMappings = properties.getMappings();
+        final Map<String, IdentityMapperRule> propertiesMappings = properties.getRules();
         if (propertiesMappings == null) {
             mappings = new ArrayList<>();
         } else {
             mappings = new ArrayList<>(propertiesMappings.size());
-            for (Map.Entry<String, IdentityMapping> mapping : propertiesMappings.entrySet()) {
-                if (mapping.getKey() != null && mapping.getValue() != null && mapping.getValue().getPattern() != null && mapping.getValue().getReplacementValue() != null) {
-                    mappings.add(new KeyedIdentityMapping(mapping.getKey(), mapping.getValue()));
+            for (Map.Entry<String, IdentityMapperRule> mapping : propertiesMappings.entrySet()) {
+                if (mapping.getKey() != null && mapping.getValue() != null && mapping.getValue().getPattern() != null && mapping.getValue().getReplacement() != null) {
+                    mappings.add(new KeyedIdentityMapperRule(mapping.getKey(), mapping.getValue()));
                 } else {
                     logger.warn(
                             "Invalid Identity Mapping Configuration. All fields must be present: key={}, pattern={}, value={}",
                             mapping.getKey(),
                             mapping.getValue() != null ? mapping.getValue().getPattern() : null,
-                            mapping.getValue() != null ? mapping.getValue().getReplacementValue() : null);
+                            mapping.getValue() != null ? mapping.getValue().getReplacement() : null);
                 }
             }
             Collections.sort(mappings);
@@ -60,11 +60,11 @@ public class IdentityMapperImpl implements IdentityMapper {
 
     @Override
     public String mapIdentity(final String identity) {
-        for (KeyedIdentityMapping mapping : mappings) {
+        for (KeyedIdentityMapperRule mapping : mappings) {
             Matcher m = mapping.getPattern().matcher(identity);
             if (m.matches()) {
                 final String pattern = mapping.getPattern().pattern();
-                final String replacementValue = escapeLiteralBackReferences(mapping.getReplacementValue(), m.groupCount());
+                final String replacementValue = escapeLiteralBackReferences(mapping.getReplacement(), m.groupCount());
                 logger.debug("Mapped identity based on '{}' rule, resulting in identity='{}'", mapping.getKey());
                 return identity.replaceAll(pattern, replacementValue);
             }

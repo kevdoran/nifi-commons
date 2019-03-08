@@ -19,12 +19,15 @@
 
 package org.apache.nifi.commons.security.ldap;
 
+import org.apache.nifi.commons.security.identity.BaseIdentityProviderProperties;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
 
-public class LdapProperties {
+public class LdapProperties extends BaseIdentityProviderProperties {
 
 //    <!--
 //    Identity Provider for users logging in with username/password against an LDAP server.
@@ -58,9 +61,9 @@ public class LdapProperties {
     private boolean enabled;
 
     @NotEmpty
-    private Set<String> urls;
+    private List<String> urls;
 
-    private Duration expiration;
+    private Duration expiration = Duration.ofHours(12);
 
     private ReferralStrategy referralStrategy = ReferralStrategy.FOLLOW;
 
@@ -84,11 +87,11 @@ public class LdapProperties {
         this.enabled = enabled;
     }
 
-    public Set<String> getUrls() {
+    public List<String> getUrls() {
         return urls;
     }
 
-    public void setUrls(Set<String> urls) {
+    public void setUrls(List<String> urls) {
         this.urls = urls;
     }
 

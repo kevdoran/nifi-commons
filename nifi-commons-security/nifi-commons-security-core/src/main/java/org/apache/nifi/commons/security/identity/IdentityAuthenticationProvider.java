@@ -23,13 +23,14 @@ import org.apache.nifi.commons.security.StandardUser;
 import org.apache.nifi.commons.security.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 
-public class IdentityAuthenticationProvider implements AuthenticationProvider {
+public class IdentityAuthenticationProvider implements AuthenticationProvider, Ordered {
 
     private static final Logger logger = LoggerFactory.getLogger(IdentityAuthenticationProvider.class);
 
@@ -39,11 +40,23 @@ public class IdentityAuthenticationProvider implements AuthenticationProvider {
 
     public IdentityAuthenticationProvider(
             //Authorizer authorizer,
+            IdentityProvider identityProvider) {
+        // this.authorizer = authorizer;
+        this(identityProvider, null);
+    }
+
+    public IdentityAuthenticationProvider(
+            //Authorizer authorizer,
             IdentityProvider identityProvider,
             IdentityMapper identityMapper) {
         // this.authorizer = authorizer;
         this.identityProvider = identityProvider;
         this.identityMapper = identityMapper;
+    }
+
+    @Override
+    public int getOrder() {
+        return identityProvider.getOrder();
     }
 
     @Override
@@ -99,6 +112,9 @@ public class IdentityAuthenticationProvider implements AuthenticationProvider {
     }
 
     protected String mapIdentity(final String identity) {
+        if (identityMapper == null) {
+            return identity;
+        }
         return identityMapper.mapIdentity(identity);
     }
 

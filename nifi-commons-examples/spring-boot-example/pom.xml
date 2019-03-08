@@ -11,6 +11,19 @@
 
   <artifactId>spring-boot-example</artifactId>
 
+  <dependencyManagement>
+    <!-- Overwrite version of Java Servlet set in parent pom -->
+    <!-- Tomcat uses servlet-api 4, nifi-security-commons uses servlet-api 3.1 -->
+    <!-- This should be ok because 4 is backwards compatible with 3.1 AFAIK -->
+    <dependencies>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <dependency>

@@ -1,5 +1,6 @@
 package org.apache.nifi.commons.security.boot;
 
+import org.apache.nifi.commons.security.identity.IdentityFilter;
 import org.apache.nifi.commons.security.knox.KnoxIdentityProvider;
 import org.apache.nifi.commons.security.knox.KnoxProperties;
 import org.apache.nifi.commons.security.knox.KnoxService;
@@ -7,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 @Configuration
 @ConditionalOnProperty(prefix = KnoxIdentityProviderAutoConfiguration.DEFAULT_PREFIX, name = "enabled")
@@ -27,9 +27,13 @@ public class KnoxIdentityProviderAutoConfiguration {
     }
 
     @Bean
-    @Order(2)
     public KnoxIdentityProvider knoxIdentityProvider() {
         return new KnoxIdentityProvider(knoxService());
+    }
+
+    @Bean
+    public IdentityFilter knoxIdentityFilter() {
+        return new IdentityFilter(knoxIdentityProvider());
     }
 
 }

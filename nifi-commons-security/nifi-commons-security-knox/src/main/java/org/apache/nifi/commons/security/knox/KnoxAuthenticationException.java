@@ -1,4 +1,4 @@
-package org.apache.nifi.commons.security.knox;/*
+/*
  *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +16,8 @@ package org.apache.nifi.commons.security.knox;/*
  *  limitations under the License.
  *
  */
+
+package org.apache.nifi.commons.security.knox;
 
 import org.springframework.security.core.AuthenticationException;
 

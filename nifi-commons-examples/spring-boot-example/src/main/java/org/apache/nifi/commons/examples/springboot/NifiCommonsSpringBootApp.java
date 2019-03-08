@@ -5,7 +5,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.util.Properties;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.apache.nifi.commons")
 public class NifiCommonsSpringBootApp {
 
     public static void main(String[] args) {

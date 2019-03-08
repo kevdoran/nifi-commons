@@ -18,24 +18,25 @@ package org.apache.nifi.commons.security.identity;
 
 import java.util.regex.Pattern;
 
-/**
- * Holder to pass around the key, pattern, and replacement from a configured identity mapping
- */
-class IdentityMapping {
+class KeyedIdentityMapperRule extends IdentityMapperRule implements Comparable<KeyedIdentityMapperRule> {
 
-    private final Pattern pattern;
-    private final String replacementValue;
+    private final String key;
 
-    IdentityMapping(String key, Pattern pattern, String replacementValue) {
-        this.pattern = pattern;
-        this.replacementValue = replacementValue;
+    KeyedIdentityMapperRule(String key, IdentityMapperRule identityMapperRule) {
+        this(key, identityMapperRule.getPattern(), identityMapperRule.getReplacement());
     }
 
-    Pattern getPattern() {
-        return pattern;
+    KeyedIdentityMapperRule(String key, Pattern pattern, String replacementValue) {
+        super(key, pattern, replacementValue);
+        this.key = key;
     }
 
-    public String getReplacementValue() {
-        return replacementValue;
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public int compareTo(KeyedIdentityMapperRule o) {
+        return this.key.compareTo(o.key);
     }
 }

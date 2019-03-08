@@ -1,4 +1,4 @@
-package org.apache.nifi.commons.security.knox;/*
+/*
  *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +16,7 @@ package org.apache.nifi.commons.security.knox;/*
  *  limitations under the License.
  *
  */
+package org.apache.nifi.commons.security.knox;
 
 import com.nimbusds.jose.JOSEException;
 import org.apache.nifi.commons.security.exception.IdentityAccessException;
@@ -27,14 +28,12 @@ import org.apache.nifi.commons.security.identity.IdentityProviderUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
 
-@Component
 public class KnoxIdentityProvider implements IdentityProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KnoxIdentityProvider.class);

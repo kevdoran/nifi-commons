@@ -17,8 +17,10 @@
 package org.apache.nifi.commons.security.boot;
 
 import org.apache.nifi.commons.security.identity.IdentityMapper;
-import org.apache.nifi.commons.security.identity.IdentityMapperImpl;
+import org.apache.nifi.commons.security.identity.DefaultIdentityMapper;
 import org.apache.nifi.commons.security.identity.IdentityMapperProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,15 +28,37 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class IdentityMapperAutoConfiguration {
 
+    static final String PROPERTIES_PREFIX = "security.user.identity-mapper";
+
     @Bean
-    @ConfigurationProperties("security.user.identity.mapper")
+    @ConfigurationProperties(PROPERTIES_PREFIX)
     public IdentityMapperProperties identityMapperProperties() {
         return new IdentityMapperProperties();
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = IdentityMapperAutoConfiguration.PROPERTIES_PREFIX, name = "enabled")
     public IdentityMapper identityMapper() {
-        return new IdentityMapperImpl(identityMapperProperties());
+        return new DefaultIdentityMapper(identityMapperProperties());
     }
+
+
+    @Configuration
+    @ConditionalOnMissingBean(IdentityMapper.class)
+    public static class DefaultConfiguration {
+
+        @Bean
+        public IdentityMapper noopIdentityMapper() {
+            return new IdentityMapper() {
+                @Override
+                public String mapIdentity(String identity) {
+                    return identity;
+                }
+            };
+        }
+
+    }
+
+
 
 }

@@ -1,4 +1,4 @@
-package org.apache.nifi.commons.security.knox;/*
+/*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -14,6 +14,9 @@ package org.apache.nifi.commons.security.knox;/*
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+package org.apache.nifi.commons.security.knox;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
@@ -24,6 +27,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -55,7 +67,7 @@ public class KnoxService {
             }
 
             // create the verifier
-            verifier = new RSASSAVerifier(properties.getKnoxPublicKey());
+            verifier = new RSASSAVerifier(getRSAPublicKey(properties.getPublicKey()));
 
             // get the audience
             audiences = properties.getAudiences();
@@ -237,6 +249,24 @@ public class KnoxService {
         }
 
         return valid;
+    }
+
+    private static RSAPublicKey getRSAPublicKey(final String publicKeyPath) {
+        // get the path to the public key
+        final Path knoxPublicKeyPath = Paths.get(publicKeyPath);
+
+        // ensure the file exists
+        if (Files.isRegularFile(knoxPublicKeyPath) && Files.exists(knoxPublicKeyPath)) {
+            try (final InputStream publicKeyStream = Files.newInputStream(knoxPublicKeyPath)) {
+                final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+                final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(publicKeyStream);
+                return (RSAPublicKey) certificate.getPublicKey();
+            } catch (final IOException | CertificateException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        } else {
+            throw new RuntimeException(String.format("The specified Knox public key path does not exist '%s'", knoxPublicKeyPath.toString()));
+        }
     }
 
 }

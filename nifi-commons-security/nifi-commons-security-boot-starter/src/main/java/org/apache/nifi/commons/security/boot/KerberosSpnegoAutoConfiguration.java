@@ -1,5 +1,6 @@
 package org.apache.nifi.commons.security.boot;
 
+import org.apache.nifi.commons.security.identity.IdentityFilter;
 import org.apache.nifi.commons.security.kerberos.KerberosSpnegoIdentityProvider;
 import org.apache.nifi.commons.security.kerberos.KerberosSpnegoProperties;
 import org.apache.nifi.commons.security.kerberos.KerberosUserDetailsService;
@@ -8,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.kerberos.authentication.KerberosServiceAuthenticationProvider;
 import org.springframework.security.kerberos.authentication.KerberosTicketValidator;
@@ -37,36 +37,6 @@ public class KerberosSpnegoAutoConfiguration {
     @ConfigurationProperties(prefix = DEFAULT_PREFIX)
     public KerberosSpnegoProperties kerberosSpnegoProperties() {
         return new KerberosSpnegoProperties();
-    }
-
-    @Bean
-    @Order(3)
-    public KerberosSpnegoIdentityProvider kerberosSpnegoIdentityProvider() {
-        final KerberosSpnegoProperties properties = kerberosSpnegoProperties();
-        if (kerberosSpnegoIdentityProvider == null && properties.isEnabled()) {
-            kerberosSpnegoIdentityProvider = new KerberosSpnegoIdentityProvider(
-                    kerberosServiceAuthenticationProvider(),
-                    properties);
-        }
-        return kerberosSpnegoIdentityProvider;
-    }
-
-    // TODO, is this even needed or is there a spring security bean we can use? one with config props?
-    @Bean
-    public KerberosServiceAuthenticationProvider kerberosServiceAuthenticationProvider() {
-        final KerberosSpnegoProperties properties = kerberosSpnegoProperties();
-        if (kerberosServiceAuthenticationProvider == null && properties.isEnabled()) {
-            try {
-                KerberosServiceAuthenticationProvider ksap = new KerberosServiceAuthenticationProvider();
-                ksap.setTicketValidator(kerberosTicketValidator);
-                ksap.setUserDetailsService(new KerberosUserDetailsService());
-                ksap.afterPropertiesSet();
-                kerberosServiceAuthenticationProvider = ksap;
-            } catch (Exception e) {
-                throw new RuntimeException("Could not initialize " + KerberosSpnegoIdentityProvider.class.getSimpleName(), e);
-            }
-        }
-        return kerberosServiceAuthenticationProvider;
     }
 
     // TODO, is this even needed or is there a spring security bean we can use? one with config props?
@@ -98,6 +68,40 @@ public class KerberosSpnegoAutoConfiguration {
         }
 
         return kerberosTicketValidator;
+    }
+
+    // TODO, is this even needed or is there a spring security bean we can use? one with config props?
+    @Bean
+    public KerberosServiceAuthenticationProvider kerberosServiceAuthenticationProvider() {
+        final KerberosSpnegoProperties properties = kerberosSpnegoProperties();
+        if (kerberosServiceAuthenticationProvider == null && properties.isEnabled()) {
+            try {
+                KerberosServiceAuthenticationProvider ksap = new KerberosServiceAuthenticationProvider();
+                ksap.setTicketValidator(kerberosTicketValidator);
+                ksap.setUserDetailsService(new KerberosUserDetailsService());
+                ksap.afterPropertiesSet();
+                kerberosServiceAuthenticationProvider = ksap;
+            } catch (Exception e) {
+                throw new RuntimeException("Could not initialize " + KerberosSpnegoIdentityProvider.class.getSimpleName(), e);
+            }
+        }
+        return kerberosServiceAuthenticationProvider;
+    }
+
+    @Bean
+    public KerberosSpnegoIdentityProvider kerberosSpnegoIdentityProvider() {
+        final KerberosSpnegoProperties properties = kerberosSpnegoProperties();
+        if (kerberosSpnegoIdentityProvider == null && properties.isEnabled()) {
+            kerberosSpnegoIdentityProvider = new KerberosSpnegoIdentityProvider(
+                    kerberosServiceAuthenticationProvider(),
+                    properties);
+        }
+        return kerberosSpnegoIdentityProvider;
+    }
+
+    @Bean
+    public IdentityFilter kerberosSpnegoIdentityFilter() {
+        return new IdentityFilter(kerberosSpnegoIdentityProvider());
     }
 
 }

@@ -20,6 +20,7 @@ package org.apache.nifi.commons.security.identity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -38,7 +39,7 @@ import java.io.IOException;
  * This class is designed to be used in collaboration with an {@link IdentityAuthenticationProvider}. The identity/credentials will be
  * extracted by this filter and later validated by the {@link IdentityAuthenticationProvider} in the default SecurityInterceptorFilter.
  */
-public class IdentityFilter extends GenericFilterBean {
+public class IdentityFilter extends GenericFilterBean implements Ordered {
 
     private static final Logger logger = LoggerFactory.getLogger(IdentityFilter.class);
 
@@ -46,6 +47,11 @@ public class IdentityFilter extends GenericFilterBean {
 
     public IdentityFilter(IdentityProvider identityProvider) {
         this.identityProvider = identityProvider;
+    }
+
+    @Override
+    public int getOrder() {
+        return identityProvider.getOrder();
     }
 
     @Override

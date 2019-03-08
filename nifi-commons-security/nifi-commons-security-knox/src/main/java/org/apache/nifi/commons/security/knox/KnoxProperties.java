@@ -17,18 +17,11 @@
 
 package org.apache.nifi.commons.security.knox;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPublicKey;
+import org.apache.nifi.commons.security.identity.BaseIdentityProviderProperties;
+
 import java.util.Set;
 
-public class KnoxProperties {
+public class KnoxProperties extends BaseIdentityProviderProperties {
 
     private boolean enabled;
 
@@ -72,21 +65,12 @@ public class KnoxProperties {
         this.cookieName = cookieName;
     }
 
-    public RSAPublicKey getKnoxPublicKey() {
-        // get the path to the public key
-        final Path knoxPublicKeyPath = Paths.get(publicKey);
-
-        // ensure the file exists
-        if (Files.isRegularFile(knoxPublicKeyPath) && Files.exists(knoxPublicKeyPath)) {
-            try (final InputStream publicKeyStream = Files.newInputStream(knoxPublicKeyPath)) {
-                final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(publicKeyStream);
-                return (RSAPublicKey) certificate.getPublicKey();
-            } catch (final IOException | CertificateException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        } else {
-            throw new RuntimeException(String.format("The specified Knox public key path does not exist '%s'", knoxPublicKeyPath.toString()));
-        }
+    public String getPublicKey() {
+        return publicKey;
     }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
 }

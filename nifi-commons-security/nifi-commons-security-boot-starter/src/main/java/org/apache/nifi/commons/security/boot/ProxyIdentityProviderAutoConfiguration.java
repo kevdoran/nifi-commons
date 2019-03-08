@@ -16,6 +16,9 @@
  */
 package org.apache.nifi.commons.security.boot;
 
+import org.apache.nifi.commons.security.identity.IdentityAuthenticationProvider;
+import org.apache.nifi.commons.security.identity.IdentityFilter;
+import org.apache.nifi.commons.security.identity.IdentityMapper;
 import org.apache.nifi.commons.security.proxy.ProxyIdentityProvider;
 import org.apache.nifi.commons.security.proxy.ProxyIdentityProviderProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.web.authentication.preauth.x509.SubjectDnX509PrincipalExtractor;
 import org.springframework.security.web.authentication.preauth.x509.X509PrincipalExtractor;
 
@@ -35,11 +37,13 @@ public class ProxyIdentityProviderAutoConfiguration {
 
     static final String DEFAULT_PREFIX = "security.user.proxy";
 
-    private X509PrincipalExtractor x509PrincipalExtractor;
+    private final X509PrincipalExtractor x509PrincipalExtractor;
+    private final IdentityMapper identityMapper;
 
     @Autowired
-    public ProxyIdentityProviderAutoConfiguration(Optional<X509PrincipalExtractor> x509PrincipalExtractor) {
+    public ProxyIdentityProviderAutoConfiguration(Optional<X509PrincipalExtractor> x509PrincipalExtractor, IdentityMapper identityMapper) {
         this.x509PrincipalExtractor = x509PrincipalExtractor.orElse(new SubjectDnX509PrincipalExtractor());
+        this.identityMapper = identityMapper;
     }
 
     @Bean
@@ -49,9 +53,18 @@ public class ProxyIdentityProviderAutoConfiguration {
     }
 
     @Bean
-    @Order(1)
     public ProxyIdentityProvider proxyIdentityProvider() {
         return new ProxyIdentityProvider(proxyIdentityProviderProperties(), x509PrincipalExtractor);
+    }
+
+    @Bean
+    public IdentityFilter proxyIdentityFilter() {
+        return new IdentityFilter(proxyIdentityProvider());
+    }
+
+    @Bean
+    public IdentityAuthenticationProvider proxyIdentityAuthenticationProvider() {
+        return new IdentityAuthenticationProvider(proxyIdentityProvider(), identityMapper);
     }
 
 }

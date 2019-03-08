@@ -25,6 +25,7 @@ import org.apache.nifi.commons.security.identity.BasicAuthIdentityProvider;
 import org.apache.nifi.commons.security.identity.IdentityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.support.AbstractTlsDirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.DefaultTlsDirContextAuthenticationStrategy;
@@ -69,7 +70,7 @@ public class LdapIdentityProvider extends BasicAuthIdentityProvider implements I
         try {
             final LdapContextSource context = new LdapContextSource();
 
-            context.setUrls((String[])ldapProperties.getUrls().toArray());
+            context.setUrls(ldapProperties.getUrls().toArray(new String[0]));
 
             // this needs to be the lowercase version while the value is configured with the enum constant
             context.setReferral(ldapProperties.getReferralStrategy().toString().toLowerCase());

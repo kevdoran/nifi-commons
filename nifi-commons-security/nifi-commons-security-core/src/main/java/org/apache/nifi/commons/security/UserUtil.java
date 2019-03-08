@@ -29,14 +29,16 @@ import java.util.List;
  * Utility methods for retrieving information about the current application user.
  *
  */
-public final class UserUtils {
+public final class UserUtil {
+
+    public static final String UNKNOWN_USER_IDENTITY = "unknown";
 
     /**
      * Returns the current User or null if the current user is not a User.
      *
      * @return user
      */
-    public static User getNiFiUser() {
+    public static User getCurrentUser() {
         User user = null;
 
         // obtain the principal in the current authentication
@@ -45,18 +47,17 @@ public final class UserUtils {
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
-                user = ((UserDetails) principal).getNiFiUser();
+                user = ((UserDetails) principal).getUser();
             }
         }
 
         return user;
     }
 
-    public static String getNiFiUserIdentity() {
-        // get the nifi user to extract the username
-        User user = UserUtils.getNiFiUser();
+    public static String getCurrentUserIdentity() {
+        final User user = getCurrentUser();
         if (user == null) {
-            return "unknown";
+            return UNKNOWN_USER_IDENTITY;
         } else {
             return user.getIdentity();
         }

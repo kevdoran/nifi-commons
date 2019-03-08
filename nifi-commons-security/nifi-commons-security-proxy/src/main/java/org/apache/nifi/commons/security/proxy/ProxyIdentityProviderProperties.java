@@ -18,9 +18,11 @@
  */
 package org.apache.nifi.commons.security.proxy;
 
+import org.apache.nifi.commons.security.identity.BaseIdentityProviderProperties;
+
 import java.util.Collection;
 
-public class ProxyIdentityProviderProperties {
+public class ProxyIdentityProviderProperties extends BaseIdentityProviderProperties {
 
     private boolean enabled = false;
     private String headerName = "x-webauth-user";

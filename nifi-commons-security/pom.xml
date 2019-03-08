@@ -17,7 +17,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.nifi.commons</groupId>
-    <artifactId>nifi-commons</artifactId>
+    <artifactId>nifi-commons-project</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
@@ -28,23 +28,13 @@
 
   <modules>
     <module>nifi-commons-security-api</module>
-    <module>nifi-commons-security-core</module>
     <module>nifi-commons-security-boot-starter</module>
-    <module>nifi-commons-security-x509</module>
-    <module>nifi-commons-security-ldap</module>
+    <module>nifi-commons-security-core</module>
     <module>nifi-commons-security-kerberos</module>
-    <module>nifi-commons-security-proxy</module>
     <module>nifi-commons-security-knox</module>
+    <module>nifi-commons-security-ldap</module>
+    <module>nifi-commons-security-proxy</module>
+    <module>nifi-commons-security-x509</module>
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${javax.servlet-api.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
 </project>

@@ -26,16 +26,37 @@ import javax.servlet.http.HttpServletRequest;
  *
  * Specifically, this provider can:
  *  - extract credentials from an HttpServletRequest (eg, parse a header, form parameter, or client certificates)
- *  - authenticate those credentials and map them to an authenticated identity value
- *    (eg, determine a username given a valid auth token)
+ *  - authenticate those credentials and map them to an authenticated identity value (eg, determine a username given
+ *    a valid auth token)
  */
 public interface IdentityProvider {
 
+    public static final int DEFAULT_ORDER = 0;
+
     /**
-     * @return an IdentityProviderUsage that describes the expectations of the inputs
+     * Provides the usage instructions for this IdentityProvider.
+     *
+     * @return an {@link IdentityProviderUsage} that describes the expectations of the inputs
      *         to {@link #authenticate(AuthenticationRequest)}
+     * @see IdentityProviderUsage
      */
     IdentityProviderUsage getUsageInstructions();
+
+    /**
+     * The sort order for the identity provider in a list of multiple providers.
+     *
+     * When multiple identity providers have been configured, this specifies the order in which this identity provider
+     * should be used or attempted. Identity providers will be sorted numerically, that is, smallest to largest.
+     *
+     * If multiple identity providers report the same order, that indicates to the framework that it does not matter
+     * which order they are placed relative to each other and the framework will decide; those identity providers will
+     * still be ordered properly relative to other identity providers with smaller or larger orders.
+     *
+     * @return an integer order to be used by the security chain for sorting.
+     */
+    default int getOrder() {
+        return DEFAULT_ORDER;
+    };
 
     /**
      * Extracts credentials from an {@link HttpServletRequest}.

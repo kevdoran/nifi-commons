@@ -19,18 +19,20 @@
 
 package org.apache.nifi.commons.security.kerberos;
 
+import org.apache.nifi.commons.security.identity.BaseIdentityProviderProperties;
+
 import java.io.File;
 import java.time.Duration;
 
-public class KerberosSpnegoProperties {
+public class KerberosSpnegoProperties extends BaseIdentityProviderProperties {
 
     private boolean enabled;
 
-    private File krb5File;  // TODO, does File type coercion / coversion work?
+    private File krb5File;  // TODO, does File type coercion / conversion work?
 
     private String principal;
 
-    private File keytabFile;  // TODO, does File type coercion / coversion work?
+    private File keytabFile;  // TODO, does File type coercion / conversion work?
 
     private Duration expiration;
 

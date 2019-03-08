@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * User details for a NiFi user.
+ * A wrapper for User that implements the Spring Security UserDetails interface.
  */
 public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
 
@@ -40,16 +40,16 @@ public class UserDetails implements org.springframework.security.core.userdetail
     }
 
     /**
-     * Get the user for this UserDetails.
+     * Get the underlying user that backs this UserDetails
      *
      * @return user
      */
-    public User getNiFiUser() {
+    public User getUser() {
         return user;
     }
 
     /**
-     * Returns the authorities that this NiFi user has.
+     * Returns the authorities that this user has.
      *
      * @return authorities
      */
