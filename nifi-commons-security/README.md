@@ -53,7 +53,9 @@ The design for the NiFi Commons Security library are based on:
       e.g., /service/* secured by mutual TLS with NEED client cert so that the proxy re-negotiates TLS connections, and UI users accessing /user/* secured by basic auth that prompts for user/pass credentials.
 - Interoperability with other security frameworks, such as Spring Security, would be a nice to have so that we can leverage other authenticating request filter implementations in our out-of-the-box providers.  
 
-### Authorization
+### Authorization [Draft WIP]; 
+
+Note: below is really just a brainstorming of ideas for a generic authorization library and may not apply to NiFi which has specific needs.
 
 - Endpoints will be protected by _Permissions_.
     - Permissions will be abstractions of actions and resources. 
