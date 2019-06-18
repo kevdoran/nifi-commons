@@ -11,6 +11,7 @@ NiFi Commons Security:
 - [x] Identity Provider Interface
 - [x] Identity Mapper Interface
 - [x] Login Redirect Provider Interface
+- [ ] Identity Mapper Transform functions
 - [x] X509 Identity Provider (TLS mutual auth client cert identity)
 - [x] LDAP Identity Provider (for user/pass login)
 - [x] Trusted Proxy Identity Provider (for reverse-proxy passed identity)

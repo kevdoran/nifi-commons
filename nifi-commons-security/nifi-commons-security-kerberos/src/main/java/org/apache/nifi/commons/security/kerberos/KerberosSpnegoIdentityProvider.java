@@ -78,6 +78,11 @@ public class KerberosSpnegoIdentityProvider implements IdentityProvider {
     }
 
     @Override
+    public String getProviderKey() {
+        return null;
+    }
+
+    @Override
     public AuthenticationRequest extractCredentials(HttpServletRequest request) {
 
         // Only support Kerberos authentication when running securely

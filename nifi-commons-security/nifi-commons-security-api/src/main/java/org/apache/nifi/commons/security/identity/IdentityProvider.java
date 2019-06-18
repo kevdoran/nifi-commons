@@ -43,6 +43,29 @@ public interface IdentityProvider {
     IdentityProviderUsage getUsageInstructions();
 
     /**
+     * A short name to use as a unique identifier for the provider.
+     *
+     * When multiple identity providers have been configured, the provider key is a string that can be used
+     * to lookup or specify a particular provider implementation (for example, in a map of <String, IdentityProvider>).
+     *
+     * The key may be used in configuration files, such as Java properties, YAML, JSON, or XML, so the recommended
+     * character set to use in the provider key is [A-Za-z0-9_-]. For example, a good key for an LdapIdentityProvider
+     * would be 'ldap'.
+     *
+     * Third-party implementers of the IdentityProvider interface should look at the implementation provided by the
+     * nifi-commons-security project to avoid using a key that will collide. Additionally, such implementers may want to
+     * use a short prefix that gives their provider keys a unique namespace, such as 'acme-sso', 'acme-ldap'.
+     *
+     * If identity providers are loaded dynamically, and multiple providers report the same key, then the framework
+     * or consumer of the interface should fail to start.
+     *
+     * @return a string
+     */
+    default String getProviderKey() {
+        return getClass().getSimpleName();
+    };
+
+    /**
      * The sort order for the identity provider in a list of multiple providers.
      *
      * When multiple identity providers have been configured, this specifies the order in which this identity provider
